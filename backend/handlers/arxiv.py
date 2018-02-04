@@ -1,5 +1,5 @@
-import base
-import urllib2
+from . import base
+import urllib.request, urllib.error, urllib.parse
 import feedparser
 from logger import logger
 
@@ -29,7 +29,7 @@ class QueryHandler(base.QueryHandler):
         if self.q == "":
             return []
         rsl = self.query(self.q)
-        print len(rsl)
+        print(len(rsl))
         if len(rsl) == 0:
             rsl = self.query(self.q, cats=[])
         return rsl
@@ -47,7 +47,7 @@ class QueryHandler(base.QueryHandler):
         q = "http://export.arxiv.org/api/query?search_query=%s%%28au:+%s+OR+ti:+%s%%29&start=0&max_results=50"
         q = q % (cats, self.q, self.q)
         logger.info("query url is  %s" % q)
-        response = urllib2.urlopen(q).read()
+        response = urllib.request.urlopen(q).read()
         feed = feedparser.parse(response)
         found_papers = []
 
@@ -67,7 +67,7 @@ class FetchHandler(base.FetchHandler):
     def _parse(self, response):
         try:
             feed = feedparser.parse(response)
-            print feed.entries
+            print(feed.entries)
             entry = feed.entries[0]
             paper = parse_arxiv_entry(entry)
             paper['search_scope'] = "arxiv"

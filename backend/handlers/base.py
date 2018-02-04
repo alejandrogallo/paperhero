@@ -1,7 +1,7 @@
 import tornado.web
 import json
 from logger import logger
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import os
 import subprocess
 import yaml
@@ -24,7 +24,7 @@ class FetchHandler(tornado.web.RequestHandler):
 
         self.url = self._create_url(arg)
         logger.info("retrieve information from %s" % self.url)
-        self.response = urllib2.urlopen(self.url).read()
+        self.response = urllib.request.urlopen(self.url).read()
 
         self.idx, self.remote_pdf, self.data = self._parse(self.response)
         logger.info("has idx %s" % self.idx)
@@ -52,7 +52,7 @@ class FetchHandler(tornado.web.RequestHandler):
     def _download(self, url, dst):
         logger.info("download file from %s to %s" % (url, dst))
         if not os.path.isfile(dst):
-            pdf = urllib2.urlopen(url)
+            pdf = urllib.request.urlopen(url)
             with open(dst, 'wb') as output:
                 output.write(pdf.read())
             logger.info("... done")
@@ -80,7 +80,7 @@ class FetchHandler(tornado.web.RequestHandler):
 
 class ThumbHandler(tornado.web.RequestHandler):
     def get(self, q=""):
-        print q
+        print(q)
         pdf_file = "data/" + q + ".pdf"
         jpg_file = pdf_file[:-4] + ".jpg"
         if not os.path.isfile(jpg_file):
@@ -100,7 +100,7 @@ class TextHandler(tornado.web.RequestHandler):
             self.write(json.dumps({"data": ""}))
 
     def _process(self, data):
-        print data
+        print(data)
         return data
 
     def post(self, q=""):
@@ -114,7 +114,7 @@ class PropertyHandler(tornado.web.RequestHandler):
         d = json.loads(self.request.body)
         with open("data/" + q + ".yml", "r") as f:
             paper = yaml.load(f)
-            for k in d.keys():
+            for k in list(d.keys()):
                 paper[str(k)] = str(d[k])
         with open("data/" + q + ".yml", 'w') as outfile:
             yaml.dump(paper, outfile, default_flow_style=False)

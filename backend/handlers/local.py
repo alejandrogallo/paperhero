@@ -1,8 +1,8 @@
-import base
+from . import base
 import os
 import glob
 import yaml
-import HTMLParser
+import html.parser
 from logger import logger
 from .. import bibtex
 
@@ -35,7 +35,7 @@ class QueryHandler(base.QueryHandler):
                     paper['jpg'] = ""
                 paper['filesize'] = file_size(file)
                 paper['search_scope'] = "local"
-                paper['authors'] = HTMLParser.HTMLParser().unescape(paper['authors'])
+                paper['authors'] = html.parser.HTMLParser().unescape(paper['authors'])
                 paper['bibtex'] = bibtex.create(paper)
             found_papers.append(paper)
         logger.info("found %i papers" % len(found_papers))

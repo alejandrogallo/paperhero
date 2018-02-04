@@ -1,2 +1,2 @@
-import local
-import arxiv
+from . import local
+from . import arxiv
